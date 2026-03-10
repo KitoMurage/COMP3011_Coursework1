@@ -4,6 +4,37 @@ from django.http import JsonResponse, HttpResponseNotFound, HttpResponseBadReque
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Avg, Count
 from .models import Player, ScoutingReport
+import base64
+from django.contrib.auth import authenticate
+
+
+# REQUIREMENT: AUTHENTICATION
+def basic_auth_required(view_func):
+    """
+    Custom decorator to enforce HTTP Basic Authentication on API endpoints.
+    """
+    def _wrapped_view(request, *args, **kwargs):
+        # Check if the Authorization header is present
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        
+        if auth_header.startswith('Basic '):
+            # Decode the base64 encoded username:password
+            encoded_credentials = auth_header.split(' ')[1]
+            decoded_credentials = base64.b64decode(encoded_credentials).decode('utf-8')
+            username, password = decoded_credentials.split(':', 1)
+            
+            # Verify against Django's built-in user database
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                request.user = user  # Attach the user to the request
+                return view_func(request, *args, **kwargs)
+        
+        # If auth fails, reject the request with a 401 Unauthorized status
+        response = JsonResponse({'error': 'Unauthorized. Please provide valid Basic Auth credentials.'}, status=401)
+        response['WWW-Authenticate'] = 'Basic realm="Pro-Scout API"'
+        return response
+        
+    return _wrapped_view
 
 # REQUIREMENT: READ & HATEOAS
 def get_player(request, player_id):
@@ -25,6 +56,7 @@ def get_player(request, player_id):
 
 
 # REQUIREMENT: CREATE (CRUD) & VALIDATION
+@basic_auth_required
 @csrf_exempt
 def create_report(request):
     if request.method == 'POST':
@@ -58,6 +90,7 @@ def create_report(request):
 
 
 # REQUIREMENT: READ, UPDATE, DELETE (CRUD)
+@basic_auth_required
 @csrf_exempt
 def manage_report(request, report_id):
     try:

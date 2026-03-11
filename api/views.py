@@ -6,6 +6,7 @@ from django.db.models import Avg, Count
 from .models import Player, ScoutingReport
 import base64
 from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_exempt
 
 
 # REQUIREMENT: AUTHENTICATION

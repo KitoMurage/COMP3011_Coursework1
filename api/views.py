@@ -1,12 +1,11 @@
 from django.shortcuts import render
 import json
 from django.http import JsonResponse, HttpResponseNotFound, HttpResponseBadRequest
-from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Avg, Count
 from .models import Player, ScoutingReport
 import base64
 from django.contrib.auth import authenticate
-from django.views.decorators.csrf import csrf_exempt
+
 
 
 # REQUIREMENT: AUTHENTICATION
@@ -58,7 +57,6 @@ def get_player(request, player_id):
 
 # REQUIREMENT: CREATE (CRUD) & VALIDATION
 @basic_auth_required
-@csrf_exempt
 def create_report(request):
     if request.method == 'POST':
         try:
@@ -92,7 +90,6 @@ def create_report(request):
 
 # REQUIREMENT: READ, UPDATE, DELETE (CRUD)
 @basic_auth_required
-@csrf_exempt
 def manage_report(request, report_id):
     try:
         report = ScoutingReport.objects.get(id=report_id)

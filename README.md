@@ -61,10 +61,14 @@ API responses include `_links` to support state transitions and discoverability.
 Sensitive endpoints (POST, PUT, DELETE) are protected via a custom Basic Auth decorator.
 
 ### Key Endpoints
-- **GET /api/scouting-reports/** – List all scouting reports
-- **POST /api/scouting-reports/** – Create a new report (Auth required)
-- **GET /api/analytics/leaderboard/** – View top-rated players
-- **GET /api/scouting-reports/<id>/** – Retrieve individual report details
+- **GET /api/players/<id>/** – Retrieve specific player details (Name, Team, Jersey)
+- **GET /api/scouting-reports/** – List all scouting reports in the system
+- **POST /api/scouting-reports/** – Create a new scouting report (Auth required)
+- **GET /api/scouting-reports/<id>/** – Retrieve specific report details with HATEOAS links
+- **PUT /api/scouting-reports/<id>/** – Update an existing report (Auth required)
+- **DELETE /api/scouting-reports/<id>/** – Remove a report from the database (Auth required)
+- **GET /api/analytics/leaderboard/** – View top 10 rated players (Django ORM Aggregation)
+- **GET /api/analytics/team-summary/** – View team-level performance analytics
 
 ## Documentation
 The full API specification (including request/response examples and error codes) is available in **Pro-Scout API Documentation.pdf**.

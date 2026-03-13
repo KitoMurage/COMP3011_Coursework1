@@ -67,4 +67,4 @@ Sensitive endpoints (POST, PUT, DELETE) are protected via a custom Basic Auth de
 - **GET /api/scouting-reports/<id>/** – Retrieve individual report details
 
 ## Documentation
-The full API specification (including request/response examples and error codes) is available in **Pro_Scout_API_Documentation.pdf**.
+The full API specification (including request/response examples and error codes) is available in **Pro-Scout API Documentation.pdf**.

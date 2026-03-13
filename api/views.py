@@ -58,7 +58,21 @@ def get_player(request, player_id):
 # REQUIREMENT: CREATE (CRUD) & VALIDATION
 @basic_auth_required
 def create_report(request):
-    if request.method == 'POST':
+    # READ: List all reports (This fixes your GET error!)
+    if request.method == 'GET':
+        reports = ScoutingReport.objects.all()
+        reports_data = []
+        for report in reports:
+            reports_data.append({
+                "id": report.id,
+                "player": report.player.name,
+                "scout_name": report.scout_name,
+                "rating": report.rating
+            })
+        return JsonResponse({"reports": reports_data}, safe=False)
+
+    # CREATE: Make a new report
+    elif request.method == 'POST':
         try:
             data = json.loads(request.body)
             player = Player.objects.get(id=data['player_id'])
@@ -86,7 +100,9 @@ def create_report(request):
             return HttpResponseBadRequest(json.dumps({"error": "Invalid JSON"}), content_type="application/json")
         except Player.DoesNotExist:
             return HttpResponseNotFound(json.dumps({"error": "Player does not exist"}), content_type="application/json")
-
+            
+    # Catch-all for any other methods (PUT, DELETE) sent to this route
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 
 # REQUIREMENT: READ, UPDATE, DELETE (CRUD)
 @basic_auth_required
